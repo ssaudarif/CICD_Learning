@@ -396,14 +396,14 @@ jobs:
 ## iOS app repo usage
 
 Following are the main usage of the CICD pipeline that is used for iOS application.
-- For every push check if build is successfull.
 - For every push check if test cases are passed.
+- For every push check if build is successfull.
 - For every push on master check if build is successfull and test cases are passing.
 - For every PR raised on master check if build is successfull and test cases are passing. Add this as comment in PR.
 - For every PR raised on master if the launch time of app is effected. Add this as comment in PR.
 
 
-### For every push check if build is successfull.
+### For every push check if test cases are passed.
 
 ```
 name: For every push check if build is successfull.
@@ -536,11 +536,49 @@ jobs:
           
 ```
 
+### For every push check if build is successfull.
 
+```
+name: build the project
 
+on:
+  push
+jobs:
+  build:
+    name: Build default scheme using any available iPhone simulator
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Set Default Scheme
+        run: |
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo $default | cat >default
+          echo Using default scheme: $default
+      
+      - name: Build
+        env:
+          scheme: ${{ 'default' }}
+          platform: ${{ 'iOS Simulator' }}
+          
+        run: |
+          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device" build
+          
+```
 
+### For every push on master check if build is successfull and test cases are passing.
 
+- This will be same as - "For every push check if test cases are passed."
+- Note: sometime the normal iOS project's default scheme have the testing targets as unit test cases and UI testcases both. To run only unit testcases in CI pipelines we need to create a different scheme that has the test target as UITestCases. Also, we need to remove the UITest target from the default scheme.
 
+### For every PR raised on master check if build is successfull and test cases are passing. Add this as comment in PR.
 
 
 
