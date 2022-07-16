@@ -22,56 +22,56 @@
 Major events that we have are -
 
 #### Trigger on push  
-``
+```
 on: [push]
-``
+```
 - Triggered every time someone pushes a change to the repository or merges a pull request.
 - This is triggered by a push to every branch.
 
 
 #### Tigger on pull request creation
-``
+```
 on: [pull_request]
-`` 
+```
 - Trigger on every pull request creation.
 
 
 #### Trigger on pull request creation on specific target branch
-``
+```
 on:
   pull_request:
     branches:    
       - main
       - 'mona/octocat'
       - 'releases/**'
-`` 
+```
 pull_request event for a pull request targeting:
 - A branch named main (refs/heads/main)
 - A branch named mona/octocat (refs/heads/mona/octocat)
 - A branch whose name starts with releases/, like releases/10 (refs/heads/releases/10)
 
 #### Trigger on pull request creation on excluding some branch
-``
+```
 on:
   pull_request:
     branches-ignore:    
       - 'mona/octocat'
       - 'releases/**-alpha'
-``
+```
 pull_request event for a pull request excluding some branches.
 
 #### Trigger on pull request creation on including and excluding some branches
-``
+```
 on:
   pull_request:
     branches:    
       - 'releases/**'
       - '!releases/**-alpha'
-``
+```
 We cannot have `branches` and `branches-ignore` to filter the same event. So we need to use `branches` with `!` character to indicate which branches should be excluded.
 
 #### Trigger on push on branches and tags
-``
+```
 on:
   push:
     branches:    
@@ -80,44 +80,44 @@ on:
     tags:        
       - v2
       - v1.*
-``
+```
 
 #### Trigger on push with Including and excluding tags.
-``
+```
 on:
   push:
     tags:        
       - v2.**
       - !v2.2
-``
+```
 
 #### Trigger on File paths are changed.
-``
+```
 on:
   push:
     paths:
       - '**.js'
-``
+```
 - When using the push and pull_request events, you can configure a workflow to run based on what file paths are changed. Path filters are not evaluated for pushes of tags.
 - Use the `paths-ignore` filter when you only want to exclude file path patterns.
 
 #### Trigger on filepath changes, include and exclude files
-``
+```
 on:
   push:
     paths:
       - 'sub-project/**'
       - '!sub-project/docs/**'
-``
+```
 
 #### Trigger on filepath changes, include and exclude files
-``
+```
 on:
   push:
     paths:
       - 'sub-project/**'
       - '!sub-project/docs/**'
-``
+```
 
 
 ## Jobs
@@ -126,29 +126,29 @@ on:
 - Each job runs in a runner environment specified by `runs-on`.    
 
 #### Setting an ID for a job
-``
+```
 jobs:
   my_first_job:
     name: My first job
   my_second_job:
     name: My second job
-``
+```
 - In this example, two jobs have been created, and their job_id values are my_first_job and my_second_job.
 - Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.    
 
 #### running job sequentially
-``
+```
 jobs:
   job1:
   job2:
     needs: job1
   job3:
     needs: [job1, job2]
-``
+```
 - Use jobs.<job_id>.needs to identify any jobs that must complete successfully before this job will run. It can be a string or array of strings.
 
 #### Not requiring successful dependent jobs
-``
+```
 jobs:
   job1:
   job2:
@@ -156,15 +156,15 @@ jobs:
   job3:
     if: ${{ always() }}
     needs: [job1, job2]
-``
+```
 - In this example, job3 uses the always() conditional expression so that it always runs after job1 and job2 have completed, regardless of whether they were successful.
 
 #### Choosing the runner for a job
-``
+```
 jobs:
   job1:
     runs-on: macos-latest
-``
+```
 - Use jobs.<job_id>.runs-on to define the type of machine to run the job on
 - for mac we have following options
     - macos-12                      ->   macOS Monterey 12
@@ -173,13 +173,13 @@ jobs:
 
 #### Choosing self-hosted runners
 - All self-hosted runners have the `self-hosted` label. Using only this label will select any `self-hosted` runner. To select runners that meet certain criteria, such as operating system or architecture, we recommend providing an array of labels that begins with `self-hosted` (this must be listed first) and then includes additional labels as needed. When you specify an array of labels, jobs will be queued on runners that have all the labels that you specify.
-``
+```
 runs-on: [self-hosted, macos]
-``
+```
 
 #### Using conditions to control job execution
 - You can use the jobs.<job_id>.if conditional to prevent a job from running unless a condition is met.
-``
+```
 name: example-workflow
 on: [push]
 jobs:
@@ -192,26 +192,26 @@ jobs:
         with:
           node-version: '14'
       - run: npm install -g bats
-``
+```
 - The above example will only run if the repository is named octo-repo-prod and is within the octo-org organization.
 - If the condition is false then the job will be marked as skipped.
 
 ### Using a matrix for your jobs
-``
+```
 jobs:
   example_matrix:
     strategy:
       matrix:
         version: [10, 12, 14]
         os: [ubuntu-latest, windows-latest]
-``
+```
 - A matrix strategy lets you use variables in a single job definition to automatically create multiple job runs that are based the combinations of the variables. 
 - Use jobs.<job_id>.strategy.matrix to define a matrix of different job configurations.
 - In the above example - A job will run for each possible combination of the variables. In this example, the workflow will run six jobs, one for each combination of the os and version variables.
 - A matrix will generate a maximum of 256 jobs per workflow run.
 
 #### Using a single-dimension matrix
-``
+```
 jobs:
   example_matrix:
     strategy:
@@ -221,7 +221,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.version }}
-``
+```
 - The above workflow defines the variable version with the values [10, 12, 14]. The workflow will run three jobs, one for each value in the variable.
 - Each job will access the version value through the matrix.version context and pass the value as node-version to the actions/setup-node action.
 
@@ -230,15 +230,15 @@ jobs:
 - You can use contexts to create matrices.
 - For example, the following workflow triggers on the repository_dispatch event and uses information from the event payload to build the matrix. 
 - When a repository dispatch event is created with a payload like the one below, the matrix version variable will have a value of [12, 14, 16].
-``
+```
 {
   "event_type": "test",
   "client_payload": {
     "versions": [12, 14, 16]
   }
 }
-``
-``
+```
+```
 on:
   repository_dispatch:
     types:
@@ -254,12 +254,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.version }}
-`` 
+```
 
 #### Expanding or adding matrix configurations
 - Use jobs.<job_id>.strategy.matrix.include to expand existing matrix configurations or to add new configurations. The value of include is a list of objects.
 - For example, this matrix:
-``
+```
 strategy:
   matrix:
     fruit: [apple, pear]
@@ -273,7 +273,7 @@ strategy:
       - fruit: banana
       - fruit: banana
         animal: cat
-``
+```
 - will result in six jobs with the following matrix combinations:
 * {fruit: apple, animal: cat, color: pink, shape: circle}
 * {fruit: apple, animal: dog, color: green, shape: circle}
@@ -291,7 +291,7 @@ strategy:
 
 #### Expanding configurations
 - The following workflow will run six jobs, one for each combination of os and node. When the job for the os value of windows-latest and node value of 16 runs, an additional variable called npm with the value of 6 will be included in the job.
-``
+```
 jobs:
   example_matrix:
     strategy:
@@ -310,11 +310,11 @@ jobs:
       - if: ${{ matrix.npm }}
         run: npm install -g npm@${{ matrix.npm }}
       - run: npm --version
-``
+```
 
 #### Adding configurations
 - This matrix will run 10 jobs, one for each combination of os and version in the matrix, plus a job for the os value of windows-latest and version value of 17.
-``
+```
 jobs:
   example_matrix:
     strategy:
@@ -324,10 +324,10 @@ jobs:
         include:
           - os: windows-latest
             version: 17
-``
+```
 
 - If you don't specify any matrix variables, all configurations under include will run. For example, the following workflow would run two jobs, one for each include entry. This lets you take advantage of the matrix strategy without having a fully populated matrix.
-``
+```
 jobs:
   includes_only:
     runs-on: ubuntu-latest
@@ -338,13 +338,13 @@ jobs:
             datacenter: "site-a"
           - site: "staging"
             datacenter: "site-b"
-``
+```
 
 #### Excluding matrix configurations
 - To remove specific configurations defined in the matrix, use jobs.<job_id>.strategy.matrix.exclude. 
 - An excluded configuration only has to be a partial match for it to be excluded. 
 - For example, the following workflow will run nine jobs: one job for each of the 12 configurations, minus the one excluded job that matches {os: macos-latest, version: 12, environment: production}, and the two excluded jobs that match {os: windows-latest, version: 16}.
-``
+```
 strategy:
   matrix:
     os: [macos-latest, windows-latest]
@@ -357,7 +357,7 @@ strategy:
       - os: windows-latest
         version: 16
 runs-on: ${{ matrix.os }}
-``
+```
 
 #### Handling failures
 - You can control how job failures are handled with `jobs.<job_id>.strategy.fail-fast` and `jobs.<job_id>.continue-on-error`.
@@ -365,7 +365,7 @@ runs-on: ${{ matrix.os }}
 - `jobs.<job_id>.continue-on-error` applies to a single job. If `jobs.<job_id>.continue-on-error` is true, other jobs in the matrix will continue running even if the job with jobs.<job_id>.continue-on-error: true fails.    
 - You can use `jobs.<job_id>.strategy.fail-fast` and `jobs.<job_id>.continue-on-error` together. 
     - For example, the following workflow will start four jobs. For each job, `continue-on-error` is determined by the value of `matrix.experimental`.
-``
+```
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -378,11 +378,11 @@ jobs:
         include:
           - version: 9
             experimental: true
-``
+```
 
 #### Defining the maximum number of concurrent jobs
 - To set the maximum number of jobs that can run simultaneously when using a matrix job strategy, use jobs.<job_id>.strategy.max-parallel.
-``
+```
 jobs:
   example_matrix:
     strategy:
@@ -390,7 +390,7 @@ jobs:
       matrix:
         version: [10, 12, 14]
         os: [ubuntu-latest, windows-latest]
-``
+```
 
 
 ## iOS app repo usage
@@ -405,7 +405,7 @@ Following are the main usage of the CICD pipeline that is used for iOS applicati
 
 ### For every push check if build is successfull.
 
-``
+```
 name: For every push check if build is successfull.
 
 on:
@@ -534,7 +534,7 @@ jobs:
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
           
-``
+```
 
 
 
