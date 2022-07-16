@@ -98,7 +98,7 @@ on:
     paths:
       - '**.js'
 ```
-- When using the push and pull_request events, you can configure a workflow to run based on what file paths are changed. Path filters are not evaluated for pushes of tags.
+- When using the `push` and `pull_request` events, you can configure a workflow to run based on what file paths are changed. Path filters are not evaluated for pushes of tags.
 - Use the `paths-ignore` filter when you only want to exclude file path patterns.
 
 #### Trigger on filepath changes, include and exclude files
@@ -122,7 +122,7 @@ on:
 
 ## Jobs
 - A workflow run is made up of one or more `jobs`, which run in parallel by default.
-- To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
+- To run jobs sequentially, you can define dependencies on other jobs using the `jobs.<job_id>.needs` keyword.
 - Each job runs in a runner environment specified by `runs-on`.    
 
 #### Setting an ID for a job
@@ -133,8 +133,8 @@ jobs:
   my_second_job:
     name: My second job
 ```
-- In this example, two jobs have been created, and their job_id values are my_first_job and my_second_job.
-- Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.    
+- In this example, two jobs have been created, and their `job_id` values are `my_first_job` and `my_second_job`.
+- Use `jobs.<job_id>.name` to set a name for the job, which is displayed in the GitHub UI.    
 
 #### running job sequentially
 ```
@@ -145,7 +145,7 @@ jobs:
   job3:
     needs: [job1, job2]
 ```
-- Use jobs.<job_id>.needs to identify any jobs that must complete successfully before this job will run. It can be a string or array of strings.
+- Use `jobs.<job_id>.needs` to identify any jobs that must complete successfully before this job will run. It can be a string or array of strings.
 
 #### Not requiring successful dependent jobs
 ```
@@ -157,7 +157,7 @@ jobs:
     if: ${{ always() }}
     needs: [job1, job2]
 ```
-- In this example, job3 uses the always() conditional expression so that it always runs after job1 and job2 have completed, regardless of whether they were successful.
+- In this example, `job3` uses the `always()` conditional expression so that it always runs after `job1` and `job2` have completed, regardless of whether they were successful.
 
 #### Choosing the runner for a job
 ```
@@ -165,7 +165,7 @@ jobs:
   job1:
     runs-on: macos-latest
 ```
-- Use jobs.<job_id>.runs-on to define the type of machine to run the job on
+- Use `jobs.<job_id>.runs-on` to define the type of machine to run the job on
 - for mac we have following options
     - macos-12                      ->   macOS Monterey 12
     - macos-latest or macos-11      ->   macOS Big Sur 11 ( The macos-latest label currently uses the macOS 11 runner image. )
@@ -178,7 +178,7 @@ runs-on: [self-hosted, macos]
 ```
 
 #### Using conditions to control job execution
-- You can use the jobs.<job_id>.if conditional to prevent a job from running unless a condition is met.
+- You can use the `jobs.<job_id>.if` conditional to prevent a job from running unless a condition is met.
 ```
 name: example-workflow
 on: [push]
@@ -206,7 +206,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 ```
 - A matrix strategy lets you use variables in a single job definition to automatically create multiple job runs that are based the combinations of the variables. 
-- Use jobs.<job_id>.strategy.matrix to define a matrix of different job configurations.
+- Use `jobs.<job_id>.strategy.matrix` to define a matrix of different job configurations.
 - In the above example - A job will run for each possible combination of the variables. In this example, the workflow will run six jobs, one for each combination of the os and version variables.
 - A matrix will generate a maximum of 256 jobs per workflow run.
 
@@ -257,7 +257,7 @@ jobs:
 ```
 
 #### Expanding or adding matrix configurations
-- Use jobs.<job_id>.strategy.matrix.include to expand existing matrix configurations or to add new configurations. The value of include is a list of objects.
+- Use `jobs.<job_id>.strategy.matrix.include` to expand existing matrix configurations or to add new configurations. The value of include is a list of objects.
 - For example, this matrix:
 ```
 strategy:
